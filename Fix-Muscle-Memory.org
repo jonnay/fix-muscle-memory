@@ -1,0 +1,249 @@
+#+title: Fix Muscle Memory
+
+  This is a literate Elisp file.
+
+* About
+
+#+name: emagician/fix-mm-commentary
+#+begin_src org
+  
+  When spell correcting, this package forces you to fix your mixtakes
+  three times to re-write your muscle memory into typing it correctly.
+
+* Motivation
+
+  I used to type 'necessary' wrong... ALL THE TIME.  I misspelled it so
+  often that it became part of my muscle memory.  It is one of *THOSE*
+  words for me.  There are others, that by muscle or brain memory,
+  are "burned in" as a particular pattern.
+ 
+  This is an attempt to break that pattern, by forcing you to re-type
+  your misspelled words 3 times.  This should help overcome any broken
+  muscle and brain memory.
+
+* Usage
+
+  - Step 1 :: Require this file
+  - Step 2 :: Use M-$ to check the spelling of your misspelled word
+  - Step 3 :: follow the directions of the prompt
+  
+  If you want, you can customize the 
+  `fix-muscle-memory-load-problem-words' variable, and that will 
+  force you to fix the typos when you make them, rather than at 
+  spell-check time.
+
+  This works by adding the words to the global abbrev table, and
+  modifying the `abbrev-expand-function'.  If you do any jiggery-pokery
+  there, you'll need to be aware.
+
+* Changelog
+
+  - v 0.1 :: First Version.
+  - v 0.2 :: 
+    - Minor documentation fix. 
+  - v 0.3 ::
+    - Fix bug when using Ispell.
+  - v 0.3.1 ::
+    - Gave it it's own repository (finally).
+    - Added abbrev hook.
+    - properly manage the response back from `ispell-command-loop'.
+    - Added cute emoji.  I couldn't help myself.
+#+end_src
+
+** ispell-command-loop after advice
+
+#+name: emagician/fix-mm-spell
+#+begin_src emacs-lisp
+(defun fix-muscle-memory-in-ispell (orig-fn miss guess word start end)
+  "Advice function to run after an ispell word has been selected"
+  (let ((return-value (funcall orig-fn miss guess word start end)))
+    (when (stringp return-value)
+      (fix-muscle-memory-correct-user-with-the-ruler miss return-value))
+    return-value))
+
+(advice-add 'ispell-command-loop :around #'fix-muscle-memory-in-ispell)
+#+end_src
+
+** Ruler Correction 🙇📏
+
+   Beat the user with a stick when they don't behave. 
+
+#+name: emagician/fix-mm-the-ruler 
+#+begin_src emacs-lisp 
+(defun fix-muscle-memory-correct-user-with-the-ruler (the-problem the-solution)
+  "The user correction function.
+
+This function helps fix a bug in the user by making them type out
+`THE-SOLUTION' in response to when `THE-PROBLEM' is seen."
+  (beep)
+  (let* ((required-corrections 3)
+         (attempts 0))
+    (while (< attempts required-corrections)
+      (when (< attempts -6) (error "Too many failed attempts! 😿"))
+      (setq attempts 
+            (+ attempts (if (string= (read-string
+                                      (format "Bad User *whack*.🙇📏 Please fix '%s' with '%s' (%d/%d): "
+                                              the-problem
+                                              the-solution
+                                              attempts
+                                              required-corrections))
+                                  the-solution)
+                         1
+                       (progn (beep) -1)))))))
+#+end_src
+
+#+begin_src emacs-lisp 
+(when nil
+  (fix-muscle-memory-correct-user-with-the-ruler "tet" "test"))
+#+end_src
+
+I am not sure if this test is quite up to snuff, I don't think the ~remove-function~ call does the right thing.
+
+
+#+begin_src emacs-lisp 
+(ert-deftest fix-muscle-memory-correct-user-with-the-ruler-bottoms-out ()
+  "This test uses advice to handle the read-string"
+  (add-function :around (symbol-function 'read-string) (lambda (str x) "pass") '(:name 'mock))
+  (unwind-protect
+      (progn 
+        (should-error (fix-muscle-memory-correct-user-with-the-ruler "foo" "past"))
+        (should (progn (fix-muscle-memory-correct-user-with-the-ruler "foo" "pass") t)))
+    (remove-function (symbol-function 'read-string) ''mock)))
+#+end_src
+
+This fixes any meefiness while totally ruining any other read-string advice. 
+~(advice-mapc (lambda (x y) (advice-remove 'read-string x)) 'read-string)~
+
+
+** TODO write an abbrev expansion Function
+
+   This should 
+   - take an abbrev like "teh" or "comptuer"
+   - expand it
+   - then beep at you and 
+   - make you type it in 3 times. 
+
+*** Customization 
+#+name: emagician/fix-mm-custom 
+#+begin_src emacs-lisp :tangle no 
+(defcustom fix-muscle-memory-problem-words 
+  '()
+  "A list of problematic words that should be immediately fixed.
+This is a lit of cons cells, with the car being the typo and the
+cdr the fix.
+
+If you edit this outside of customize, you will need to use
+`fix-muscle-memory-load-problem-words' function instead. "
+  :type '(repeat (cons string string))
+  :set 'fix-muscle-memory-load-problem-words)
+
+(defun fix-muscle-memory-load-problem-words (sym values)
+  "Remove existing problem words and re-set them.
+`VALUES' is a list of word pairs.  
+`SYM' is just there for customize."
+  ; remove the old abbrevs
+  (dolist (word-pair fix-muscle-memory-problem-words)
+    (define-abbrev global-abbrev-table (car word-pair) nil))
+  ; set the new 
+  (dolist (word-pair values)
+          (define-abbrev global-abbrev-table 
+            (car word-pair)
+            (cdr word-pair)
+            nil
+            '(:system t)))
+  (setq fix-muscle-memory-problem-words values))
+#+end_src
+
+#+begin_src emacs-lisp 
+(ert-deftest fix-muscle-memory-load-problem-words-test ()
+  (let ((fix-muscle-memory-problem-words '(("a" . "b") ("c" . "d"))))
+    (fix-muscle-memory-load-problem-words 'foo '(("y". "z")))
+    (should (equal fix-muscle-memory-problem-words
+                   '(("y" . "z"))))))
+#+end_src
+
+#+name: emagician/fix-mm-abbrev
+#+begin_src emacs-lisp 
+(defun fix-muscle-memory-expand-abbrev ()
+  (let* ((abbrev (abbrev--default-expand))
+         (word (assoc (symbol-name abbrev) fix-muscle-memory-problem-words)))
+    (when (and abbrev word)
+      (fix-muscle-memory-correct-user-with-the-ruler (car word) (cdr word)))
+    abbrev))
+
+(setq abbrev-expand-function #'fix-muscle-memory-expand-abbrev)
+#+end_src
+
+** Simple output .el for MELPA
+
+#+begin_src emacs-lisp :tangle fix-muscle-memory.el  :noweb yes :padline no
+  ;;; fix-spell-memory.el --- Simple hack into ispell to fix (muscle) memory problems
+ 
+  ;; Copyright (C) 2012 Jonathan Arkell
+  
+  ;; Author: Jonathan Arkell <jonnay@jonnay.net>
+  ;; Created: 5 Oct 2012
+  ;; Keywords: erc bitlbee bot
+  ;; Version 0.1
+  
+  ;; This file is not part of GNU Emacs.
+  ;; Released under the GPL v3.0
+  
+  ;;; Commentary:
+  ;; <<emagician/fix-mm-commentary>>
+  
+  ;;; Code:
+  
+  <<emagician/fix-mm-custom>>
+
+  <<emagician/fix-mm-the-ruler>>
+
+  <<emagician/fix-mm-spell>>
+
+  <<emagician/fix-mm-abbrev>>  
+
+  (provide 'emagician-fix-spell-memory)
+  
+  ;;; emagician-fix-spell-memory ends here
+#+end_src
+
+** Output a readme file 
+#+begin_src org-mode :tangle README.org :noweb yes 
+<<emagician/fix-mm-commentary>>
+#+end_src
+
+
+** Test Melpa recipe 
+
+   This test code is kinda crappy, but it works.
+
+*** TODO move this code into emagician proper 
+
+	Initialize package-build for... you know... building
+
+#+begin_src emacs-lisp :tangle no
+  (let* ((melpa-dir (concat (file-name-directory (buffer-file-name))
+                            "melpa/")))
+    (setq package-build-recipes-dir (concat melpa-dir "recipes"))
+    (setq package-build-working-dir (concat melpa-dir "working"))
+    (setq package-build-archive-dir (concat melpa-dir "packages")))
+  (add-to-list 'load-path (concat (file-name-directory (buffer-file-name)) "melpa"))
+  (require 'package-build)
+#+end_src
+
+	GO!
+
+#+begin_src emacs-lisp :tangle no 
+  (when nil
+    (progn
+      (setq package-build-alist (assq-delete-all 'emagician-fix-spell-memory package-build-alist))
+      (package-build-initialize)
+      (package-build-archive 'emagician-fix-spell-memory)
+    )
+    ; Blank line for easier execution
+    )    
+#+end_src
+
+** TODO Update package to muscle memory bind keys
+*** NEXT find hook point. Start with helm, go from there
+*** NEXT see if we can get the proper key combo 
