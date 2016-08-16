@@ -6,65 +6,52 @@
 
 #+name: emagician/fix-mm-commentary
 #+begin_src org
-  
-  When spell correcting, this package forces you to fix your mixtakes
-  three times to re-write your muscle memory into typing it correctly.
-
-* Motivation
-
-  I used to type 'necessary' wrong... ALL THE TIME.  I misspelled it so
-  often that it became part of my muscle memory.  It is one of *THOSE*
-  words for me.  There are others, that by muscle or brain memory,
-  are "burned in" as a particular pattern.
- 
-  This is an attempt to break that pattern, by forcing you to re-type
-  your misspelled words 3 times.  This should help overcome any broken
-  muscle and brain memory.
-
-* Usage
-
-  - Step 1 :: Require this file
-  - Step 2 :: Use M-$ to check the spelling of your misspelled word
-  - Step 3 :: follow the directions of the prompt
-  
-  If you want, you can customize the 
-  `fix-muscle-memory-load-problem-words' variable, and that will 
-  force you to fix the typos when you make them, rather than at 
-  spell-check time.
-
-  This works by adding the words to the global abbrev table, and
-  modifying the `abbrev-expand-function'.  If you do any jiggery-pokery
-  there, you'll need to be aware.
-
-* Changelog
-
-  - v 0.1 :: First Version.
-  - v 0.2 :: 
-    - Minor documentation fix. 
-  - v 0.3 ::
-    - Fix bug when using Ispell.
-  - v 0.3.1 ::
-    - Gave it it's own repository (finally).
-    - Added abbrev hook.
-    - properly manage the response back from `ispell-command-loop'.
-    - Added cute emoji.  I couldn't help myself.
+  ,   
+  ,   When spell correcting, this package forces you to fix your mixtakes
+  ,   three times to re-write your muscle memory into typing it correctly.
+  , 
+  , * Motivation
+  , 
+  ,   I used to type 'necessary' wrong... ALL THE TIME.  I misspelled it so
+  ,   often that it became part of my muscle memory.  It is one of *THOSE*
+  ,   words for me.  There are others, that by muscle or brain memory,
+  ,   are "burned in" as a particular pattern.
+  ,  
+  ,   This is an attempt to break that pattern, by forcing you to re-type
+  ,   your misspelled words 3 times.  This should help overcome any broken
+  ,   muscle and brain memory.
+  , 
+  , * Usage
+  , 
+  ,   - Step 1 :: Require this file
+  ,   - Step 2 :: Use M-$ to check the spelling of your misspelled word
+  ,   - Step 3 :: follow the directions of the prompt
+  ,   
+  ,   If you want, you can customize the 
+  ,   `fix-muscle-memory-load-problem-words' variable, and that will 
+  ,   force you to fix the typos when you make them, rather than at 
+  ,   spell-check time.
+  , 
+  ,   This works by adding the words to the global abbrev table, and
+  ,   modifying the `abbrev-expand-function'.  If you do any jiggery-pokery
+  ,   there, you'll need to be aware.
+  , 
+  , * Changelog
+  , 
+  ,   - v 0.1 :: First Version.
+  ,   - v 0.2 :: 
+  ,     - Minor documentation fix. 
+  ,   - v 0.3 ::
+  ,     - Fix bug when using Ispell.
+  ,   - v 0.3.1 ::
+  ,     - Gave it it's own repository (finally).
+  ,     - Added abbrev hook.
+  ,     - properly manage the response back from `ispell-command-loop'.
+  ,     - Added cute emoji.  I couldn't help myself.
 #+end_src
 
-** ispell-command-loop after advice
 
-#+name: emagician/fix-mm-spell
-#+begin_src emacs-lisp
-(defun fix-muscle-memory-in-ispell (orig-fn miss guess word start end)
-  "Advice function to run after an ispell word has been selected"
-  (let ((return-value (funcall orig-fn miss guess word start end)))
-    (when (stringp return-value)
-      (fix-muscle-memory-correct-user-with-the-ruler miss return-value))
-    return-value))
-
-(advice-add 'ispell-command-loop :around #'fix-muscle-memory-in-ispell)
-#+end_src
-
-** Ruler Correction 🙇📏
+* Ruler Correction 🙇📏
 
    Beat the user with a stick when they don't behave. 
 
@@ -114,16 +101,30 @@ I am not sure if this test is quite up to snuff, I don't think the ~remove-funct
 This fixes any meefiness while totally ruining any other read-string advice. 
 ~(advice-mapc (lambda (x y) (advice-remove 'read-string x)) 'read-string)~
 
+* ispell-command-loop after advice
 
-** TODO write an abbrev expansion Function
+#+name: emagician/fix-mm-spell
+#+begin_src emacs-lisp
+(defun fix-muscle-memory-in-ispell (orig-fn miss guess word start end)
+  "Advice function to run after an ispell word has been selected"
+  (let ((return-value (funcall orig-fn miss guess word start end)))
+    (when (stringp return-value)
+      (fix-muscle-memory-correct-user-with-the-ruler miss return-value))
+    return-value))
 
-   This should 
-   - take an abbrev like "teh" or "comptuer"
-   - expand it
-   - then beep at you and 
-   - make you type it in 3 times. 
+(advice-add 'ispell-command-loop :around #'fix-muscle-memory-in-ispell)
+#+end_src
 
-*** Customization 
+
+*  abbrev expansion Function
+
+  This should 
+  - take an abbrev like "teh" or "comptuer"
+  - expand it
+  - then beep at you and 
+  - make you type it in 3 times. 
+
+** Customization 
 #+name: emagician/fix-mm-custom 
 #+begin_src emacs-lisp :tangle no 
 (defcustom fix-muscle-memory-problem-words 
@@ -136,14 +137,18 @@ If you edit this outside of customize, you will need to use
 `fix-muscle-memory-load-problem-words' function instead. "
   :type '(repeat (cons string string))
   :set 'fix-muscle-memory-load-problem-words)
+#+end_src
 
+#+name: emagician/fix-mm-problem-words-fn
+#+begin_src emacs-lisp 
 (defun fix-muscle-memory-load-problem-words (sym values)
   "Remove existing problem words and re-set them.
 `VALUES' is a list of word pairs.  
 `SYM' is just there for customize."
   ; remove the old abbrevs
-  (dolist (word-pair fix-muscle-memory-problem-words)
-    (define-abbrev global-abbrev-table (car word-pair) nil))
+  (when (boundp 'fix-muscle-memory-problem-words)
+    (dolist (word-pair fix-muscle-memory-problem-words)
+      (define-abbrev global-abbrev-table (car word-pair) nil)))
   ; set the new 
   (dolist (word-pair values)
           (define-abbrev global-abbrev-table 
@@ -153,6 +158,7 @@ If you edit this outside of customize, you will need to use
             '(:system t)))
   (setq fix-muscle-memory-problem-words values))
 #+end_src
+
 
 #+begin_src emacs-lisp 
 (ert-deftest fix-muscle-memory-load-problem-words-test ()
@@ -174,7 +180,7 @@ If you edit this outside of customize, you will need to use
 (setq abbrev-expand-function #'fix-muscle-memory-expand-abbrev)
 #+end_src
 
-** Simple output .el for MELPA
+* Output .el for MELPA
 
 #+begin_src emacs-lisp :tangle fix-muscle-memory.el  :noweb yes :padline no
   ;;; fix-spell-memory.el --- Simple hack into ispell to fix (muscle) memory problems
@@ -193,6 +199,8 @@ If you edit this outside of customize, you will need to use
   ;; <<emagician/fix-mm-commentary>>
   
   ;;; Code:
+
+  <<emagician/fix-mm-problem-words-fn>>
   
   <<emagician/fix-mm-custom>>
 
@@ -207,17 +215,16 @@ If you edit this outside of customize, you will need to use
   ;;; emagician-fix-spell-memory ends here
 #+end_src
 
-** Output a readme file 
+* Output a readme file 
 #+begin_src org-mode :tangle README.org :noweb yes 
 <<emagician/fix-mm-commentary>>
 #+end_src
 
+* Test Melpa recipe 
 
-** Test Melpa recipe 
+  This test code is kinda crappy, but it works.
 
-   This test code is kinda crappy, but it works.
-
-*** TODO move this code into emagician proper 
+** TODO move this code into emagician proper 
 
 	Initialize package-build for... you know... building
 
