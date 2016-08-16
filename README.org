@@ -1,43 +1,42 @@
 
-,   
-,   When spell correcting, this package forces you to fix your mixtakes
-,   three times to re-write your muscle memory into typing it correctly.
-, 
-, * Motivation
-, 
-,   I used to type 'necessary' wrong... ALL THE TIME.  I misspelled it so
-,   often that it became part of my muscle memory.  It is one of *THOSE*
-,   words for me.  There are others, that by muscle or brain memory,
-,   are "burned in" as a particular pattern.
-,  
-,   This is an attempt to break that pattern, by forcing you to re-type
-,   your misspelled words 3 times.  This should help overcome any broken
-,   muscle and brain memory.
-, 
-, * Usage
-, 
-,   - Step 1 :: Require this file
-,   - Step 2 :: Use M-$ to check the spelling of your misspelled word
-,   - Step 3 :: follow the directions of the prompt
-,   
-,   If you want, you can customize the 
-,   `fix-muscle-memory-load-problem-words' variable, and that will 
-,   force you to fix the typos when you make them, rather than at 
-,   spell-check time.
-, 
-,   This works by adding the words to the global abbrev table, and
-,   modifying the `abbrev-expand-function'.  If you do any jiggery-pokery
-,   there, you'll need to be aware.
-, 
-, * Changelog
-, 
-,   - v 0.1 :: First Version.
-,   - v 0.2 :: 
-,     - Minor documentation fix. 
-,   - v 0.3 ::
-,     - Fix bug when using Ispell.
-,   - v 0.3.1 ::
-,     - Gave it it's own repository (finally).
-,     - Added abbrev hook.
-,     - properly manage the response back from `ispell-command-loop'.
-,     - Added cute emoji.  I couldn't help myself.
+When spell correcting, this package forces you to fix your mistakes
+  three times to re-write your muscle memory into typing it corrqectly.
+
+* Motivation
+
+  I used to type 'necessary' wrong... ALL THE TIME.  I misspelled it so
+  often that it became part of my muscle memory.  It is one of *THOSE*
+  words for me.  There are others, that by muscle or brain memory,
+  are "burned in" as a particular pattern.
+
+  This is an attempt to break that pattern, by forcing you to re-type
+  your misspelled words 3 times.  This should help overcome any broken
+  muscle and brain memory.
+
+* Usage
+
+  - Step 1 :: Require this file
+  - Step 2 :: Use M-$ to check the spelling of your misspelled word
+  - Step 3 :: follow the directions of the prompt
+
+  If you want, you can customize the
+  `fix-muscle-memory-load-problem-words' variable, and that will
+  force you to fix the typos when you make them, rather than at
+  spell-check time.
+
+  This works by adding the words to the global abbrev table and
+  modifying the `abbrev-expand-function'.  If you do any jiggery-pokery
+  there you'll need to do more jiggery-pokery.
+
+* Changelog
+
+  - v 0.1 :: First Version.
+  - v 0.2 ::
+    - Minor documentation fix.
+  - v 0.3 ::
+    - Fix bug when using Ispell.
+  - v 0.3.1 ::
+    - Gave it it's own repository (finally).
+    - Added abbrev hook for fixing as-you-type-mistakes.
+    - properly manage the response back from `ispell-command-loop'.
+    - Added cute emoji.  I couldn't help myself.
