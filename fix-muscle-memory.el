@@ -57,6 +57,24 @@
 
 ;;; Code:
 
+(defun fix-muscle-memory-load-problem-words (sym values)
+  "Remove existing problem words and re-set them.
+`SYM' is just there for customize.
+`VALUES' is a list of word pairs."
+                                        ; remove the old abbrevs
+  (when (boundp 'fix-muscle-memory-problem-words)
+    (dolist (word-pair fix-muscle-memory-problem-words)
+      (define-abbrev global-abbrev-table (car word-pair) nil)))
+                                        ; set the new
+  (dolist (word-pair values)
+    (define-abbrev global-abbrev-table
+      (car word-pair)
+      (cdr word-pair)
+      nil
+      '(:system t)))
+  (setq fix-muscle-memory-problem-words values))
+
+
 (defcustom fix-muscle-memory-problem-words
   '()
   "A list of problematic words that should be immediately fixed.
@@ -68,22 +86,6 @@ If you edit this outside of customize, you will need to use
   :type '(repeat (cons string string))
   :set 'fix-muscle-memory-load-problem-words)
 
-(defun fix-muscle-memory-load-problem-words (sym values)
-  "Remove existing problem words and re-set them.
-`SYM' is just there for customize.
-`VALUES' is a list of word pairs."
-  ; remove the old abbrevs
-  (when (boundp 'fix-muscle-memory-problem-words)
-    (dolist (word-pair fix-muscle-memory-problem-words)
-      (define-abbrev global-abbrev-table (car word-pair) nil)))
-  ; set the new
-  (dolist (word-pair values)
-          (define-abbrev global-abbrev-table
-            (car word-pair)
-            (cdr word-pair)
-            nil
-            '(:system t)))
-  (setq fix-muscle-memory-problem-words values))
 
 (defun fix-muscle-memory-correct-user-with-the-ruler (the-problem the-solution)
   "The user correction function.

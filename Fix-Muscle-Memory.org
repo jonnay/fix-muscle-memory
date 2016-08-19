@@ -216,9 +216,8 @@ fix it if the abbrev matches one of the `fix-muscle-memory-problem-words'."
 
   ;;; Code:
 
-  <<emagician/fix-mm-custom>>
-
   <<emagician/fix-mm-problem-words-fn>>
+  <<emagician/fix-mm-custom>>
 
   <<emagician/fix-mm-the-ruler>>
 
