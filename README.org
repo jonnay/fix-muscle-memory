@@ -20,12 +20,17 @@ When spell correcting, this package forces you to fix your mistakes
    - Step 2 :: Use M-$ to check the spelling of your misspelled word
    - Step 3 :: follow the directions of the prompt
 
+** Fixing Spelling Mistakes Automagickally
+
    If you want, you can customize the
    `fix-muscle-memory-load-problem-words' variable, and that will
    force you to fix the typos when you make them, rather than at
    spell-check time.  Alternatively just call
    `fix-muscle-memory-load-problem-words' with nil and an alist of
    problem words in the format of (("tyop" . "typo")).
+
+   Because this uses abbrev mode, you will need to make sure to enable
+   it.
 
 ** Helping with Extended commands
 
@@ -35,10 +40,18 @@ When spell correcting, this package forces you to fix your mistakes
   The next time however you will be told the key-combo to use and then
   prompted to enter it three times.
 
+  Customize `fix-muscle-memory-enable-extended-command' and you're off
+  to the races.
+
 ** Getting out
   
   Entering in the wrong answer more than 6 times or so will exit out
   of the loop.  Alternatively C-g (quit) will get you out as well.
+
+** Super Kawaii
+
+  Customize the variable `fix-muscle-memory-use-emoji' to true to use
+  cute emoji icons along with text. 
 
 * Changelog
 

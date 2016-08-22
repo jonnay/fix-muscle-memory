@@ -29,12 +29,17 @@
    - Step 2 :: Use M-$ to check the spelling of your misspelled word
    - Step 3 :: follow the directions of the prompt
 
+,** Fixing Spelling Mistakes Automagickally
+
    If you want, you can customize the
    `fix-muscle-memory-load-problem-words' variable, and that will
    force you to fix the typos when you make them, rather than at
    spell-check time.  Alternatively just call
    `fix-muscle-memory-load-problem-words' with nil and an alist of
    problem words in the format of (("tyop" . "typo")).
+
+   Because this uses abbrev mode, you will need to make sure to enable
+   it.
 
 ,** Helping with Extended commands
 
@@ -44,10 +49,18 @@
   The next time however you will be told the key-combo to use and then
   prompted to enter it three times.
 
+  Customize `fix-muscle-memory-enable-extended-command' and you're off
+  to the races.
+
 ,** Getting out
   
   Entering in the wrong answer more than 6 times or so will exit out
   of the loop.  Alternatively C-g (quit) will get you out as well.
+
+,** Super Kawaii
+
+  Customize the variable `fix-muscle-memory-use-emoji' to true to use
+  cute emoji icons along with text. 
 
 ,* Changelog
 
@@ -76,6 +89,22 @@ Hooks into espell and makes you re-type mitakes 3 times.  Also
 an optional abbrev hook.")
 #+end_src
 
+** Emoji
+
+   Not everyone will have or want these.
+
+#+begin_src emacs-lisp 
+(defcustom fix-muscle-memory-use-emoji nil
+  "Use emoji characters in promps."
+  :group 'fix-muscle-memory
+  :type 'boolean)
+
+(defun fix-muscle-memory-emoji (chars)
+  "Helper function for spitting out emoji"
+  (if fix-muscle-memory-use-emoji
+      chars
+    ""))
+#+end_src
 
 
 * Fixing Mistakes / Providing Opportunities 
@@ -98,10 +127,12 @@ We make the user type `THE-SOLUTION' 3 times to fix it."
   (let* ((required-corrections 3)
          (attempts 0))
     (while (< attempts required-corrections)
-      (when (< attempts -6) (error "Too many failed attempts! 😿"))
+      (when (< attempts -6) (error "Too many failed attempts! %s"
+                                   (fix-muscle-memory-emoji "😿")))
       (setq attempts
             (+ attempts (if (string= (read-string
-                                      (format "Bad User *whack*.🙇📏 Please fix '%s' with '%s' (%d/%d): "
+                                      (format "Bad User *whack*. %s Please fix '%s' with '%s' (%d/%d): "
+                                              (fix-muscle-memory-emoji "🙇📏")
                                               the-problem
                                               the-solution
                                               attempts
@@ -150,23 +181,29 @@ keybinding (as a vector) `THE-SOLUTION' by typing it 3 times."
          (attempts 0)
          (last-k-error " "))
     (while (< attempts required-corrections)
-      (when (< attempts -6) (error "Too many failed attempts! 😿"))
+      (when (< attempts -6) (error "Too many failed attempts! %s"
+                                   (fix-muscle-memory-emoji "😿")))
       (pcase (read-key-sequence
-              (format "🐰💭Learning is fun!  Execute '%s' with '%s' %s(%d/%d): "
+              (format "%sLearning is fun!  Execute '%s' with '%s' %s(%d/%d): "
+                      (fix-muscle-memory-emoji "🐰💭 ")
                       the-problem
                       the-solution
                       last-k-error
                       attempts
                       required-corrections))
         ((pred (equal (kbd the-solution)))
-         (setq last-k-error "✅")
+         (setq last-k-error (fix-muscle-memory-emoji "✅"))
          (setq attempts (1+ attempts)))
         ((pred (equal (kbd "C-g")))
          (setq attempts required-corrections)
          (message "Okay, Giving up."))
         (k-error
          (beep)
-         (setq last-k-error (format "❌ %s " k-error))
+         (setq last-k-error (format "%s %s "
+                                    (if fix-muscle-memory-use-emoji
+                                        "❌"
+                                      "WRONG")
+                                    k-error))
          (setq attempts (1- attempts)))))))
 #+end_src
 
@@ -265,13 +302,11 @@ required.
 transparently.")
 #+end_src
 
-#+name emagician/fix-mm-set-abbrev-fn
+#+name: emagician/fix-mm-set-abbrev-fn
 #+begin_src emacs-lisp 
 (unless (eq abbrev-expand-function #'fix-muscle-memory-expand-abbrev)
     (setq emagician-actual-abbrev-function abbrev-expand-function)
     (setq abbrev-expand-function #'fix-muscle-memory-expand-abbrev))
-
-(setq abbrev-expand-function #'abbrev--default-expand)
 #+end_src
 
 **** Abbrev function
@@ -291,7 +326,6 @@ the user to fix it if the abbrev matches one of the
       (fix-muscle-memory-correct-user-with-the-ruler (car word) (cdr word)))
     abbrev))
 #+end_src
-
 
 * Creating New Opportunities
 
@@ -424,7 +458,7 @@ and COMMAND-NAME is the command to execute."
 
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
-;; Keywords: erc bitlbee bot
+;; Keywords: spelling typing
 ;; Version 0.1
 
 ;; This file is not part of GNU Emacs.
@@ -434,21 +468,29 @@ and COMMAND-NAME is the command to execute."
 ;; <<emagician/fix-mm-commentary>>
 
 ;;; Code:
-
+
 <<emagician/fix-mm-custom>>
+
 <<emagician/fix-mm-problem-words-fn>>
+
 <<emagician/fix-mm-custom-problem-words>>
+
 <<emagician/fix-mm-on-extended-command>>
+
 <<emagician/fix-mm-on-extended-command-custom>>
-
+
 <<emagician/fix-mm-abbrev-fn-var>>
+
 <<emagician/fix-mm-commands-with-bindings-var>>
-
+
 <<emagician/fix-mm-the-ruler>>
-<<emagician/fix-mm-spell>>
-<<emagician/fix-mm-abbrev>>
 
+<<emagician/fix-mm-spell>>
+
+<<emagician/fix-mm-abbrev>>
+
 <<emagician/fix-mm-make-muscle-memory>>
+
 <<emagician/fix-mm-extended-command-advice>>
 
 (provide 'fix-muscle-memory)
