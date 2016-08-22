@@ -5,7 +5,7 @@
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version 0.9
+;; Version: 0.9
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
@@ -328,4 +328,4 @@ and COMMAND-NAME is the command to execute."
 
 (provide 'fix-muscle-memory)
 
-;;; fix-muscle-memory ends here
+;;; fix-muscle-memory.el ends here
