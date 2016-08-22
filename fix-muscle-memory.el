@@ -5,16 +5,15 @@
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version 0.9
+;; Version 0.91
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
 
 ;;; Commentary:
 ;; 
-;; 
 ;;    When spell correcting, this package forces you to fix your mistakes
-;;    three times to re-write your muscle memory into typing it corrqectly.
+;;    three times to re-write your muscle memory into typing it correctly.
 ;; 
 ;; * Motivation
 ;; 
@@ -68,7 +67,7 @@
 ;;   cute emoji icons along with text. 
 ;; 
 ;; ** Easy Setup with use-package
-;; 
+;; #+begin_src emacs-lisp
 ;; (use-package 'fix-muscle-memory
 ;;   :init
 ;;   (setq fix-muscle-memory-use-emoji t)
@@ -82,20 +81,6 @@
 ;;   (add-hook 'prog-mode-hook 'abbrev-mode)
 ;; 
 ;;   (turn-on-fix-muscle-memory-on-extended-command))
-;; 
-;; * Changelog
-;; 
-;;    - v 0.1 :: First Version.
-;;    - v 0.2 ::
-;;      - Minor documentation fix.
-;;    - v 0.3 ::
-;;      - Fix bug when using Ispell.
-;;    - v 0.90 :: Almost ready for 1.0!
-;;      - Gave it it's own repository (finally).
-;;      - Added abbrev hook for fixing as-you-type-mistakes.
-;;      - properly manage the response back from `ispell-command-loop'.
-;;      - Added cute emoji.  I couldn't help myself.
-;;      - Added fix-muscle-memory-extended-command
 
 ;;; Code:
 
@@ -140,14 +125,14 @@ If you edit this outside of customize, you will need to use
   "Help the user use bound keys instead of M-x.
 
 When `execute-extended-command' is used to run a command that
-can be eecuted through a bound key instead, the user is notified
+can be executed through a bound key instead, the user is notified
 of the key.  After 3 uses of the same command, the user is then
 prompted to enter that key 3 times in an attempt to rewire their
-brian.
+brain.
 
 If the user has `suggest-key-binding' bound, they will be
 notified in the message area which keycombo to use on the first
-three exteneded command uses.
+three extended command uses.
 
 If helm-command is loaded, then `helm-M-x' will also be
 extended."
@@ -260,7 +245,7 @@ the user to fix it if the abbrev matches one of the
 (defun emagician/make-muscle-memory (the-problem the-solution)
   "The user binding habit creation function.
 
-This function adds a feature to the user user so that indead of
+This function adds a feature to the user user so that instead of
 using the extended command `THE-PROBLEM'.they learn to use the
 keybinding (as a vector) `THE-SOLUTION' by typing it 3 times."
   (beep)
@@ -294,7 +279,7 @@ keybinding (as a vector) `THE-SOLUTION' by typing it 3 times."
          (setq attempts (1- attempts)))))))
 
 (defun fix-muscle-memory-extended-command-advice (arg &optional command-name)
-  "Advice around to suggest a command anb bug user.
+  "Advice around to suggest a command and bug user.
 
 Same args as `execute-extended-command'.  ARG for a prefix arg
 and COMMAND-NAME is the command to execute."

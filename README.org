@@ -1,6 +1,6 @@
 
 When spell correcting, this package forces you to fix your mistakes
-   three times to re-write your muscle memory into typing it corrqectly.
+   three times to re-write your muscle memory into typing it correctly.
 
 * Motivation
 
@@ -54,7 +54,7 @@ When spell correcting, this package forces you to fix your mistakes
   cute emoji icons along with text. 
 
 ** Easy Setup with use-package
-
+#+begin_src emacs-lisp
 (use-package 'fix-muscle-memory
   :init
   (setq fix-muscle-memory-use-emoji t)
@@ -68,17 +68,3 @@ When spell correcting, this package forces you to fix your mistakes
   (add-hook 'prog-mode-hook 'abbrev-mode)
 
   (turn-on-fix-muscle-memory-on-extended-command))
-
-* Changelog
-
-   - v 0.1 :: First Version.
-   - v 0.2 ::
-     - Minor documentation fix.
-   - v 0.3 ::
-     - Fix bug when using Ispell.
-   - v 0.90 :: Almost ready for 1.0!
-     - Gave it it's own repository (finally).
-     - Added abbrev hook for fixing as-you-type-mistakes.
-     - properly manage the response back from `ispell-command-loop'.
-     - Added cute emoji.  I couldn't help myself.
-     - Added fix-muscle-memory-extended-command

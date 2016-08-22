@@ -7,9 +7,8 @@
 #+name: emagician/fix-mm-commentary
 #+begin_src org
 
-
    When spell correcting, this package forces you to fix your mistakes
-   three times to re-write your muscle memory into typing it corrqectly.
+   three times to re-write your muscle memory into typing it correctly.
 
 ,* Motivation
 
@@ -63,7 +62,7 @@
   cute emoji icons along with text. 
 
 ,** Easy Setup with use-package
-
+#+begin_src emacs-lisp
 (use-package 'fix-muscle-memory
   :init
   (setq fix-muscle-memory-use-emoji t)
@@ -77,6 +76,7 @@
   (add-hook 'prog-mode-hook 'abbrev-mode)
 
   (turn-on-fix-muscle-memory-on-extended-command))
+#+end_src
 
 ,* Changelog
 
@@ -91,6 +91,8 @@
      - properly manage the response back from `ispell-command-loop'.
      - Added cute emoji.  I couldn't help myself.
      - Added fix-muscle-memory-extended-command
+   - v 0.91
+     - Fix Spelling mistakes in code. 
 #+end_src
 
 
@@ -99,9 +101,9 @@
 #+name emagician/fmm-custom-group
 #+begin_src emacs-lisp
 (defgroup 'fix-muscle-memory '()
-  "Fix Muscle Memory by turning emacs into your ruler weilding tutor!
+  "Fix Muscle Memory by turning emacs into your ruler wielding tutor!
 
-Hooks into espell and makes you re-type mitakes 3 times.  Also
+Hooks into espell and makes you re-type mistakes 3 times.  Also
 an optional abbrev hook.")
 #+end_src
 
@@ -111,7 +113,7 @@ an optional abbrev hook.")
 
 #+begin_src emacs-lisp 
 (defcustom fix-muscle-memory-use-emoji nil
-  "Use emoji characters in promps."
+  "Use emoji characters in prompts."
   :group 'fix-muscle-memory
   :type 'boolean)
 
@@ -189,7 +191,7 @@ This fixes any meefiness while totally ruining any other read-string advice.
 (defun emagician/make-muscle-memory (the-problem the-solution)
   "The user binding habit creation function.
 
-This function adds a feature to the user user so that indead of
+This function adds a feature to the user user so that instead of
 using the extended command `THE-PROBLEM'.they learn to use the
 keybinding (as a vector) `THE-SOLUTION' by typing it 3 times."
   (beep)
@@ -371,14 +373,14 @@ Whether or not to prompt the user to re-type keybindings when
   "Help the user use bound keys instead of M-x.
 
 When `execute-extended-command' is used to run a command that
-can be eecuted through a bound key instead, the user is notified
+can be executed through a bound key instead, the user is notified
 of the key.  After 3 uses of the same command, the user is then
 prompted to enter that key 3 times in an attempt to rewire their
-brian.
+brain.
 
 If the user has `suggest-key-binding' bound, they will be
 notified in the message area which keycombo to use on the first
-three exteneded command uses.
+three extended command uses.
 
 If helm-command is loaded, then `helm-M-x' will also be
 extended."
@@ -432,7 +434,7 @@ extended."
 #+name: emagician/fix-mm-extended-command-advice
 #+begin_src emacs-lisp 
 (defun fix-muscle-memory-extended-command-advice (arg &optional command-name)
-  "Advice around to suggest a command anb bug user.
+  "Advice around to suggest a command and bug user.
 
 Same args as `execute-extended-command'.  ARG for a prefix arg
 and COMMAND-NAME is the command to execute."
@@ -475,7 +477,7 @@ and COMMAND-NAME is the command to execute."
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version 0.9
+;; Version 0.91
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
