@@ -60,7 +60,7 @@ When spell correcting, this package forces you to fix your mistakes
      - Minor documentation fix.
    - v 0.3 ::
      - Fix bug when using Ispell.
-   - v 0.4 ::
+   - v 0.90 :: Almost ready for 1.0!
      - Gave it it's own repository (finally).
      - Added abbrev hook for fixing as-you-type-mistakes.
      - properly manage the response back from `ispell-command-loop'.
