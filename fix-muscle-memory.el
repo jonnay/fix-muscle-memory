@@ -1,11 +1,11 @@
-;;; fix-spell-memory.el --- Simple hack into ispell to fix (muscle) memory problems
+;;; fix-muscle-memory.el --- Simple hacks to fix muscle memory problems
 
-;; Copyright (C) 2012 Jonathan Arkell
+;; Copyright (C) 2012-2016 Jonathan Arkell
 
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version 0.1
+;; Version 0.9
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
@@ -67,6 +67,22 @@
 ;;   Customize the variable `fix-muscle-memory-use-emoji' to true to use
 ;;   cute emoji icons along with text. 
 ;; 
+;; ** Easy Setup with use-package
+;; 
+;; (use-package 'fix-muscle-memory
+;;   :init
+;;   (setq fix-muscle-memory-use-emoji t)
+;;   :config
+;;   (fix-muscle-memory-load-problem-words 'foo
+;;                                         '(("teh" . "the")
+;;                                           ("comptuer" . "computer")
+;;                                           ("destory" . "destroy")
+;;                                           ("occured" . "occurred")))
+;;   (add-hook 'text-mode-hook 'abbrev-mode)
+;;   (add-hook 'prog-mode-hook 'abbrev-mode)
+;; 
+;;   (turn-on-fix-muscle-memory-on-extended-command))
+;; 
 ;; * Changelog
 ;; 
 ;;    - v 0.1 :: First Version.
@@ -74,7 +90,7 @@
 ;;      - Minor documentation fix.
 ;;    - v 0.3 ::
 ;;      - Fix bug when using Ispell.
-;;    - v 0.4 ::
+;;    - v 0.90 :: Almost ready for 1.0!
 ;;      - Gave it it's own repository (finally).
 ;;      - Added abbrev hook for fixing as-you-type-mistakes.
 ;;      - properly manage the response back from `ispell-command-loop'.

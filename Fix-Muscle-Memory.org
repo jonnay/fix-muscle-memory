@@ -468,14 +468,14 @@ and COMMAND-NAME is the command to execute."
 * Output .el for MELPA
 
 #+begin_src emacs-lisp :tangle fix-muscle-memory.el  :noweb yes :padline no
-;;; fix-spell-memory.el --- Simple hack into ispell to fix (muscle) memory problems
+;;; fix-muscle-memory.el --- Simple hacks to fix muscle memory problems
 
-;; Copyright (C) 2012 Jonathan Arkell
+;; Copyright (C) 2012-2016 Jonathan Arkell
 
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version 0.1
+;; Version 0.9
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
@@ -519,37 +519,4 @@ and COMMAND-NAME is the command to execute."
 <<emagician/fix-mm-commentary>>
 #+end_src
 
-* Test Melpa recipe
 
-  This test code is kinda crappy, but it works.
-
-** TODO move this code into emagician proper
-
-	Initialize package-build for... you know... building
-
-#+begin_src emacs-lisp :tangle no
-  (let* ((melpa-dir (concat (file-name-directory (buffer-file-name))
-                            "melpa/")))
-    (setq package-build-recipes-dir (concat melpa-dir "recipes"))
-    (setq package-build-working-dir (concat melpa-dir "working"))
-    (setq package-build-archive-dir (concat melpa-dir "packages")))
-  (add-to-list 'load-path (concat (file-name-directory (buffer-file-name)) "melpa"))
-  (require 'package-build)
-#+end_src
-
-	GO!
-
-#+begin_src emacs-lisp :tangle no
-  (when nil
-    (progn
-      (setq package-build-alist (assq-delete-all 'emagician-fix-spell-memory package-build-alist))
-      (package-build-initialize)
-      (package-build-archive 'emagician-fix-spell-memory)
-    )
-    ; Blank line for easier execution
-    )
-#+end_src
-
-** TODO Update package to muscle memory bind keys
-*** NEXT find hook point. Start with helm, go from there
-*** NEXT see if we can get the proper key combo
