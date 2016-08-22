@@ -5,7 +5,7 @@
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version 0.91
+;; Version: 0.91
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
@@ -96,8 +96,10 @@
 ;;      - properly manage the response back from `ispell-command-loop'.
 ;;      - Added cute emoji.  I couldn't help myself.
 ;;      - Added fix-muscle-memory-extended-command
-;;    - v 0.91
-;;      - Fix Spelling mistakes in code. 
+;;    - v 0.91 ::
+;;      - Fix Spelling mistakes in code.
+;;    - v 0.92 ::
+;;      - Package format fixes from syohex 
 
 ;;; Code:
 
@@ -330,4 +332,4 @@ and COMMAND-NAME is the command to execute."
 
 (provide 'fix-muscle-memory)
 
-;;; fix-muscle-memory ends here
+;;; fix-muscle-memory.el ends here
