@@ -81,6 +81,23 @@
 ;;   (add-hook 'prog-mode-hook 'abbrev-mode)
 ;; 
 ;;   (turn-on-fix-muscle-memory-on-extended-command))
+;; #+end_src
+;; 
+;; * Changelog
+;; 
+;;    - v 0.1 :: First Version.
+;;    - v 0.2 ::
+;;      - Minor documentation fix.
+;;    - v 0.3 ::
+;;      - Fix bug when using Ispell.
+;;    - v 0.90 :: Almost ready for 1.0!
+;;      - Gave it it's own repository (finally).
+;;      - Added abbrev hook for fixing as-you-type-mistakes.
+;;      - properly manage the response back from `ispell-command-loop'.
+;;      - Added cute emoji.  I couldn't help myself.
+;;      - Added fix-muscle-memory-extended-command
+;;    - v 0.91
+;;      - Fix Spelling mistakes in code. 
 
 ;;; Code:
 

@@ -76,7 +76,7 @@
   (add-hook 'prog-mode-hook 'abbrev-mode)
 
   (turn-on-fix-muscle-memory-on-extended-command))
-#+end_src
+,#+end_src
 
 ,* Changelog
 
