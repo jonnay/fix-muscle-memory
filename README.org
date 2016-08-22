@@ -83,5 +83,5 @@ When spell correcting, this package forces you to fix your mistakes
      - properly manage the response back from `ispell-command-loop'.
      - Added cute emoji.  I couldn't help myself.
      - Added fix-muscle-memory-extended-command
-   - v 0.91
+   - v 0.91 ::
      - Fix Spelling mistakes in code.
