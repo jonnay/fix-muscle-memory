@@ -5,7 +5,7 @@
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version: 0.91
+;; Version: 0.93
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
@@ -99,11 +99,24 @@
 ;;    - v 0.91 ::
 ;;      - Fix Spelling mistakes in code.
 ;;    - v 0.92 ::
-;;      - Package format fixes from syohex 
+;;      - Package format fixes from syohex
+;;    - v 0.93 
+;;      - Forgot to include emoji jiggerypokery. :(
 
 ;;; Code:
 
 
+
+(defcustom fix-muscle-memory-use-emoji nil
+  "Use emoji characters in prompts."
+  :group 'fix-muscle-memory
+  :type 'boolean)
+
+(defun fix-muscle-memory-emoji (chars)
+  "Helper function for spitting out emoji"
+  (if fix-muscle-memory-use-emoji
+      chars
+    ""))
 
 (defun fix-muscle-memory-load-problem-words (sym values)
   "Remove existing problem words and re-set them.
