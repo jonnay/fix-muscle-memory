@@ -187,7 +187,7 @@ I am not sure if this test is quite up to snuff, I don't think the ~remove-funct
 This fixes any meefiness while totally ruining any other read-string advice.
 ~(advice-mapc (lambda (x y) (advice-remove 'read-string x)) 'read-string)~
 
-** Learning New Keybindings
+** Learning New Keybindings 🐰💭
 
    This makes the user type the keybinding in 3 times. 
 
@@ -282,7 +282,7 @@ It also sets the abbrev function.  more on that later.
 (defun fix-muscle-memory-load-problem-words (sym values)
   "Remove existing problem words and re-set them.
 
-This also checks `abbrev-expand-function' and sets that if 
+This also checks `abbrev-expand-function' and sets that if
 required.
 
 `SYM' is just there for customize.
@@ -304,7 +304,8 @@ required.
 
 #+begin_src emacs-lisp
 (ert-deftest fix-muscle-memory-load-problem-words-test ()
-  (let ((fix-muscle-memory-problem-words '(("a" . "b") ("c" . "d"))))
+  (let ((fix-muscle-memory-problem-words '(("a" . "b") ("c" . "d")))
+        (global-abbrev-table (make-abbrev-table)))
     (fix-muscle-memory-load-problem-words 'foo '(("y". "z")))
     (should (equal fix-muscle-memory-problem-words
                    '(("y" . "z"))))))
