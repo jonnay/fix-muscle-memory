@@ -5,7 +5,7 @@
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version: 0.93
+;; Version: 0.94
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
@@ -100,8 +100,10 @@
 ;;      - Fix Spelling mistakes in code.
 ;;    - v 0.92 ::
 ;;      - Package format fixes from syohex
-;;    - v 0.93 
+;;    - v 0.93 ::
 ;;      - Forgot to include emoji jiggerypokery. :(
+;;    - v 0.94 ::
+;;      - Emacs 27 compatability fix.
 
 ;;; Code:
 
@@ -121,7 +123,7 @@
 (defun fix-muscle-memory-load-problem-words (sym values)
   "Remove existing problem words and re-set them.
 
-This also checks `abbrev-expand-function' and sets that if 
+This also checks `abbrev-expand-function' and sets that if
 required.
 
 `SYM' is just there for customize.
@@ -136,7 +138,7 @@ required.
             (car word-pair)
             (cdr word-pair)
             nil
-            '(:system t)))
+            :system t))
   (unless (eq abbrev-expand-function #'fix-muscle-memory-expand-abbrev)
       (setq emagician-actual-abbrev-function abbrev-expand-function)
       (setq abbrev-expand-function #'fix-muscle-memory-expand-abbrev))
@@ -315,18 +317,18 @@ keybinding (as a vector) `THE-SOLUTION' by typing it 3 times."
 
 Same args as `execute-extended-command'.  ARG for a prefix arg
 and COMMAND-NAME is the command to execute."
-  (let* ((function (and (stringp command-name)
-                        (intern-soft command-name)))
+  (let* ((fn (and (stringp command-name)
+                  (intern-soft command-name)))
          (binding (and suggest-key-bindings
                        (not executing-kbd-macro)
-                       (where-is-internal function overriding-local-map t)))
+                       (where-is-internal fn overriding-local-map t)))
          (waited (and binding
                       (sit-for
                        (cond
                         ((zerop (length (current-message))) 0)
                         ((numberp suggest-key-bindings) suggest-key-bindings)
                         (t 2))))))
-    (when waited
+    (when (and fn binding (key-description binding) waited)
       (if (>= 3 (puthash command-name
                         (1+ (gethash command-name
                                      emagician/commands-with-bindings
@@ -334,12 +336,12 @@ and COMMAND-NAME is the command to execute."
                         emagician/commands-with-bindings))
           (with-temp-message
               (format "You can run the command `%s' with %s"
-                      function
+                      fn
                       (key-description binding))
             (sit-for (if (numberp suggest-key-bindings)
                          suggest-key-bindings
                        2)))
-        (emagician/make-muscle-memory function
+        (emagician/make-muscle-memory fn
                                       (key-description binding))))))
 
 

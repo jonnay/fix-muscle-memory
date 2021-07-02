@@ -62,7 +62,7 @@
   cute emoji icons along with text. 
 
 ,** Easy Setup with use-package
-#+begin_src emacs-lisp
+,#+begin_src emacs-lisp
 (use-package 'fix-muscle-memory
   :init
   (setq fix-muscle-memory-use-emoji t)
@@ -95,8 +95,10 @@
      - Fix Spelling mistakes in code.
    - v 0.92 ::
      - Package format fixes from syohex
-   - v 0.93 
+   - v 0.93 ::
      - Forgot to include emoji jiggerypokery. :(
+   - v 0.94 ::
+     - Emacs 27 compatability fix.
 #+end_src
 
 
@@ -297,7 +299,7 @@ required.
             (car word-pair)
             (cdr word-pair)
             nil
-            '(:system t)))
+            :system t))
   <<emagician/fix-mm-set-abbrev-fn>>
   (setq fix-muscle-memory-problem-words values))
 #+end_src
@@ -444,18 +446,18 @@ extended."
 
 Same args as `execute-extended-command'.  ARG for a prefix arg
 and COMMAND-NAME is the command to execute."
-  (let* ((function (and (stringp command-name)
-                        (intern-soft command-name)))
+  (let* ((fn (and (stringp command-name)
+                  (intern-soft command-name)))
          (binding (and suggest-key-bindings
                        (not executing-kbd-macro)
-                       (where-is-internal function overriding-local-map t)))
+                       (where-is-internal fn overriding-local-map t)))
          (waited (and binding
                       (sit-for
                        (cond
                         ((zerop (length (current-message))) 0)
                         ((numberp suggest-key-bindings) suggest-key-bindings)
                         (t 2))))))
-    (when waited
+    (when (and fn binding (key-description binding) waited)
       (if (>= 3 (puthash command-name
                         (1+ (gethash command-name
                                      emagician/commands-with-bindings
@@ -463,12 +465,12 @@ and COMMAND-NAME is the command to execute."
                         emagician/commands-with-bindings))
           (with-temp-message
               (format "You can run the command `%s' with %s"
-                      function
+                      fn
                       (key-description binding))
             (sit-for (if (numberp suggest-key-bindings)
                          suggest-key-bindings
                        2)))
-        (emagician/make-muscle-memory function
+        (emagician/make-muscle-memory fn
                                       (key-description binding))))))
 
 #+end_src
@@ -483,7 +485,7 @@ and COMMAND-NAME is the command to execute."
 ;; Author: Jonathan Arkell <jonnay@jonnay.net>
 ;; Created: 5 Oct 2012
 ;; Keywords: spelling typing
-;; Version: 0.93
+;; Version: 0.94
 
 ;; This file is not part of GNU Emacs.
 ;; Released under the GPL v3.0
